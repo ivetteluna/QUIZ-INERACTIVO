@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QUIZ INTERACTIVO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ... (aquí van todos los estilos que ya tenías, no es necesario cambiarlos) ... */
+    /* --------------------- ESTILOS GENERALES --------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #ffae42 0%, #ff5e62 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 900px;
+      overflow: hidden;
+    }
+    /* --------------------- CABECERA --------------------- */
+    .header {
+      background: linear-gradient(90deg, #0066ff 0%, #00ccff 100%);
+      padding: 20px 20px 10px;
+      text-align: center;
+      position: relative;
+    }
+    .header img {
+      width: 500px;
+      height: auto;
+      margin: 0 auto 10px;
+      display: block;
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 2.5rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-top: 0;
+    }
+    /* --------------------- CONTENIDO --------------------- */
+    .content {
+      padding: 30px 40px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333333;
+    }
+    input[type="text"],
+    select,
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #cccccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus,
+    select:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #0066ff;
+      box-shadow: 0 0 5px rgba(0, 102, 255, 0.3);
+    }
+    /* --------------------- BOTONES --------------------- */
+    .btn {
+      display: inline-block;
+      background-color: #ff6600;
+      color: #ffffff;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      text-align: center;
+      margin-top: 15px;
+    }
+    .btn:hover {
+      background-color: #e65500;
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    /* --------------------- PREGUNTA ÚNICA --------------------- */
+    #quiz-single-container,
+    #result-container {
+      display: none;
+      margin-top: 30px;
+    }
+    .question-card {
+      margin-bottom: 25px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      background: #f9f9f9;
+      transition: background-color 0.2s;
+    }
+    .question-card:hover {
+      background: #f1faff;
+    }
+    .question-text {
+      margin-bottom: 12px;
+      font-weight: 500;
+      color: #222222;
+      font-size: 1.1rem;
+    }
+    .options-group {
+      margin-left: 10px;
+      margin-bottom: 12px;
+    }
+    .options-group label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 400;
+      color: #333333;
+      cursor: pointer;
+    }
+    .options-group input[type="radio"] {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+    }
+    /* --------------------- FEEDBACK --------------------- */
+    .feedback {
+      margin-top: 15px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .feedback.correcto {
+      background-color: #c8e6c9; /* verde claro */
+      color: #256029;             /* verde oscuro */
+    }
+    .feedback.incorrecto {
+      background-color: #ffcdd2; /* rojo claro */
+      color: #c62828;            /* rojo oscuro */
+    }
+    /* --------------------- RESUMEN FINAL --------------------- */
+    .result-box {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 20px;
+    }
+    /* --------------------- BOTONES SECUNDARIOS --------------------- */
+    #send-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .btn-secondary {
+      background-color: #0066ff;
+    }
+    .btn-secondary:hover {
+      background-color: #0052cc;
+    }
+    /* --------------------- CRÉDITOS --------------------- */
+    .creditos {
+      text-align: center;
+      margin: 25px 0;
+      font-size: 0.9rem;
+      color: #555555;
+    }
+    /* --------------------- ADAPTABILIDAD --------------------- */
+    @media (max-width: 768px) {
+      .content {
+        padding: 20px;
+      }
+      .header h1 {
+        font-size: 2rem;
+      }
+      .btn {
+        width: 100%;
+      }
+      #send-buttons .btn-secondary {
+        width: 100%;
+      }
+      .header img {
+        width: 100%;
+        max-width: 500px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://i.ibb.co/wz8XYtQ/NUEVO-LOGO.png" alt="Logo del Centro">
+      <h1>QUIZ INTERACTIVO</h1>
+    </div>
+
+    <div class="content">
+      <div id="setup-form">
+        <div class="form-group">
+          <label for="student-name">Nombre del estudiante:</label>
+          <input type="text" id="student-name" placeholder="Escribe tu nombre aquí" />
+        </div>
+        <div class="form-group">
+          <label for="level-select">Nivel:</label>
+          <select id="level-select">
+            <option value="" disabled selected>Selecciona nivel</option>
+            <option value="Primario">Primario</option>
+            <option value="Secundario">Secundario</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="grade-select">Grado:</label>
+          <select id="grade-select" disabled>
+            <option value="" disabled selected>Selecciona primero el nivel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="subject-select">Asignatura:</label>
+          <select id="subject-select" disabled>
+            <option value="" disabled selected>Selecciona primero grado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="num-questions">Número de preguntas (1–50):</label>
+          <input type="number" id="num-questions" min="1" max="50" placeholder="Ingresa cuántas preguntas deseas (hasta 50)" />
+        </div>
+        <button class="btn" id="generate-quiz-btn">Generar Quiz</button>
+      </div>
+
+      <div id="quiz-single-container">
+        <div class="question-card" id="question-card">
+          <p class="question-text" id="question-text"></p>
+          <div class="options-group" id="options-group"></div>
+          <button class="btn" id="submit-answer-btn">Enviar Respuesta</button>
+          <div id="feedback-container"></div>
+        </div>
+      </div>
+
+      <div id="result-container">
+        <h2>Resumen Final de Respuestas</h2>
+        <div class="result-box" id="final-summary"></div>
+        <div id="send-buttons">
+          <button class="btn btn-secondary" id="send-text-btn">Enviar como Texto</button>
+          <button class="btn btn-secondary" id="send-pdf-btn">Enviar como Captura de Pantalla</button>
+        </div>
+      </div>
+
+      <div class="creditos">Aplicación creada por Luis Baudilio Luna</div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- ¡YA NO HAY CLAVE DE API AQUÍ! ----------
+    const OPENAI_MODEL = 'gpt-4';
+    // ----------------------------------------------------
+
+    // Asignaturas según tu lista completa:
+    const asignaturasCompletas = [
+      'Lengua Española',
+      'Matemática',
+      'Ciencias Sociales',
+      'Ciencias de la Naturaleza',
+      'Inglés',
+      'Francés',
+      'Educación Física',
+      'Educación Artística',
+      'Formación Integral',
+      'Humana y Religiosa'
+    ];
+
+    // Construir objeto subjectsByGrade
+    const subjectsByGrade = { Primario: {}, Secundario: {} };
+    for (let nivel of ['Primario', 'Secundario']) {
+      for (let i = 1; i <= 6; i++) {
+        subjectsByGrade[nivel][i] = asignaturasCompletas;
+      }
+    }
+
+    // Referencias DOM
+    const levelSelect = document.getElementById('level-select');
+    const gradeSelect = document.getElementById('grade-select');
+    const subjectSelect = document.getElementById('subject-select');
+    const generateQuizBtn = document.getElementById('generate-quiz-btn');
+    const numQuestionsInput = document.getElementById('num-questions');
+
+    const quizSingleContainer = document.getElementById('quiz-single-container');
+    const questionTextElem = document.getElementById('question-text');
+    const optionsGroupElem = document.getElementById('options-group');
+    const submitAnswerBtn = document.getElementById('submit-answer-btn');
+    const feedbackContainer = document.getElementById('feedback-container');
+
+    const resultContainer = document.getElementById('result-container');
+    const finalSummaryElem = document.getElementById('final-summary');
+    const sendTextBtn = document.getElementById('send-text-btn');
+    const sendPdfBtn = document.getElementById('send-pdf-btn');
+
+    // Variables de control
+    let preguntasArray = [];    // Array de objetos { texto, opciones: {A,B,C,D}, correcta }
+    let currentIndex = 0;       // Índice de la pregunta actual
+    let puntaje = 0;            // Aciertos
+    let total = 0;              // Total de preguntas
+
+    // ---------- POBLAR SELECTS ----------
+    levelSelect.addEventListener('change', () => {
+      const nivel = levelSelect.value;
+      gradeSelect.innerHTML = '<option value="" disabled selected>Selecciona grado</option>';
+      subjectSelect.innerHTML = '<option value="" disabled selected>Selecciona primero grado</option>';
+      subjectSelect.disabled = true;
+
+      for (let i = 1; i <= 6; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i + '°';
+        gradeSelect.appendChild(opt);
+      }
+      gradeSelect.disabled = false;
+    });
+
+    gradeSelect.addEventListener('change', () => {
+      const nivel = levelSelect.value;
+      const grado = gradeSelect.value;
+      subjectSelect.innerHTML = '<option value="" disabled selected>Selecciona asignatura</option>';
+      const listaAsig = subjectsByGrade[nivel][grado];
+      listaAsig.forEach((asig) => {
+        const opt = document.createElement('option');
+        opt.value = asig;
+        opt.textContent = asig;
+        subjectSelect.appendChild(opt);
+      });
+      subjectSelect.disabled = false;
+    });
+
+    // ---------- GENERAR PREGUNTAS CON RESPUESTA (MODIFICADO) ---------- 
+    generateQuizBtn.addEventListener('click', async () => {
+      const nombre = document.getElementById('student-name').value.trim();
+      const nivel = levelSelect.value;
+      const grado = gradeSelect.value;
+      const asignatura = subjectSelect.value;
+      const numPreg = parseInt(numQuestionsInput.value, 10);
+
+      if (!nombre || !nivel || !grado || !asignatura) {
+        alert('Por favor completa todos los campos.');
+        return;
+      }
+      if (isNaN(numPreg) || numPreg < 1 || numPreg > 50) {
+        alert('Ingresa un número válido de preguntas (1–50).');
+        return;
+      }
+
+      generateQuizBtn.disabled = true;
+      generateQuizBtn.textContent = 'Generando preguntas...';
+
+      // Construir prompt
+      const prompt = `
+Genera ${numPreg} preguntas de selección múltiple para la asignatura de ${asignatura}, nivel ${nivel}, grado ${grado}, de acuerdo al currículo dominicano vigente. 
+Para cada pregunta, incluye:
+1. El enunciado numerado ("1. ¿...?").
+2. Cuatro opciones A), B), C) y D), cada una en su línea.
+3. Al final de cada bloque de pregunta y opciones, agrega una línea que diga "Respuesta: <letra>", donde <letra> es la opción correcta (A, B, C o D). Ejemplo:
+
+1. ¿Cuál es la capital de la República Dominicana?
+A) Santo Domingo
+B) Santiago
+C) La Vega
+D) Puerto Plata
+Respuesta: A
+
+2. ¿Qué órgano del cuerpo produce la insulina?
+A) Riñón
+B) Hígado
+C) Páncreas
+D) Corazón
+Respuesta: C
+
+… Y así sucesivamente, sin más texto extra. Solo el enunciado, las opciones y la línea de respuesta al final de cada pregunta.
+`;
+
+      try {
+        // --- ¡CAMBIO IMPORTANTE! ---
+        // Ahora llamamos a nuestra propia función de Netlify en lugar de directamente a OpenAI
+        const response = await fetch('/.netlify/functions/generar-quiz', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: prompt, model: OPENAI_MODEL })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const rawText = data.choices[0].message.content.trim();
+        parsePreguntasConRespuestas(rawText);
+
+        // Inicializar variables y mostrar primera pregunta
+        total = preguntasArray.length;
+        currentIndex = 0;
+        puntaje = 0;
+        document.getElementById('setup-form').style.display = 'none';
+        mostrarPregunta(currentIndex);
+
+      } catch (error) {
+        console.error('Error al generar preguntas:', error);
+        alert('Ocurrió un error al generar las preguntas. Revisa la consola!');
+      } finally {
+        generateQuizBtn.disabled = false;
+        generateQuizBtn.textContent = 'Generar Quiz';
+      }
+    });
+
+    /**
+     * parsePreguntasConRespuestas(rawText):
+     * Convierte el texto bruto de OpenAI en un array de objetos.
+     * (Esta función no necesita cambios)
+     */
+    function parsePreguntasConRespuestas(texto) {
+      preguntasArray = [];
+      const bloques = texto
+        .split(/\n(?=\d+\.)/) // corta justo antes de cada línea que comience con "1.", "2.", etc.
+        .map(b => b.trim())
+        .filter(b => b.length > 0);
+
+      bloques.forEach(bloque => {
+        const lineas = bloque.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        const primera = lineas[0].replace(/^\d+\.\s*/, '').trim();
+        const opciones = {};
+        for (let i = 1; i < lineas.length; i++) {
+          const m = lineas[i].match(/^([A-D])\)\s*(.+)$/);
+          if (m) {
+            opciones[m[1]] = m[2].trim();
+          }
+        }
+        const ult = lineas[lineas.length - 1].match(/^Respuesta:\s*([A-D])$/i);
+        let correcta = '';
+        if (ult) {
+          correcta = ult[1].toUpperCase();
+        }
+        preguntasArray.push({
+          texto: primera,
+          opciones: opciones,
+          correcta: correcta
+        });
+      });
+    }
+
+    /**
+     * mostrarPregunta(idx):
+     * Muestra en pantalla la pregunta número idx de preguntasArray.
+     * (Esta función no necesita cambios)
+     */
+    function mostrarPregunta(idx) {
+      const preguntaObj = preguntasArray[idx];
+      questionTextElem.textContent = `${idx + 1}. ${preguntaObj.texto}`;
+      optionsGroupElem.innerHTML = '';
+
+      ['A', 'B', 'C', 'D'].forEach(letra => {
+        if (preguntaObj.opciones[letra]) {
+          const label = document.createElement('label');
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = 'option';
+          radio.value = letra;
+          radio.required = true;
+          label.appendChild(radio);
+
+          const span = document.createElement('span');
+          span.textContent = `${letra}) ${preguntaObj.opciones[letra]}`;
+          label.appendChild(span);
+
+          optionsGroupElem.appendChild(label);
+        }
+      });
+
+      feedbackContainer.innerHTML = '';
+      submitAnswerBtn.disabled = false;
+      quizSingleContainer.style.display = 'block';
+    }
+
+    // ---------- AL ENVIAR CADA RESPUESTA: FEEDBACK Y AVANCE AUTOMÁTICO ----------
+    // (Esta función no necesita cambios)
+    submitAnswerBtn.addEventListener('click', () => {
+      const seleccionado = document.querySelector('input[name="option"]:checked');
+      if (!seleccionado) {
+        alert('Debes seleccionar una opción antes de enviar.');
+        return;
+      }
+      const valor = seleccionado.value;                    
+      const correcta = preguntasArray[currentIndex].correcta;
+
+      document.querySelectorAll('input[name="option"]').forEach(r => r.disabled = true);
+      submitAnswerBtn.disabled = true;
+
+      feedbackContainer.innerHTML = '';
+      const divFeedback = document.createElement('div');
+      let delay = 1500;
+      if (valor === correcta) {
+        puntaje++;
+        divFeedback.textContent = '¡Correcto!';
+        divFeedback.className = 'feedback correcto';
+      } else {
+        delay = 3000;
+        divFeedback.textContent = `Incorrecto. La respuesta correcta es: ${correcta}) ${preguntasArray[currentIndex].opciones[correcta]}`;
+        divFeedback.className = 'feedback incorrecto';
+      }
+      feedbackContainer.appendChild(divFeedback);
+
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < preguntasArray.length) {
+          mostrarPregunta(currentIndex);
+        } else {
+          mostrarResumenFinal();
+        }
+      }, delay);
+    });
+    
+    // ---------- MOSTRAR RESUMEN FINAL CUANDO SE ACABAN LAS PREGUNTAS ----------
+    // (Esta función no necesita cambios)
+    function mostrarResumenFinal() {
+      quizSingleContainer.style.display = 'none';
+      resultContainer.style.display = 'block';
+
+      const nombre = document.getElementById('student-name').value.trim();
+      const nivel = levelSelect.value;
+      const grado = gradeSelect.value;
+      const asignatura = subjectSelect.value;
+      const porcentaje = ((puntaje / total) * 100).toFixed(2);
+
+      let resumen = `Nombre: ${nombre}\nNivel: ${nivel}\nGrado: ${grado}\nAsignatura: ${asignatura}\n\n`;
+      resumen += `Total de preguntas: ${total}\nAciertos: ${puntaje}\nFallos: ${total - puntaje}\nPorcentaje: ${porcentaje}%\n`;
+      finalSummaryElem.textContent = resumen;
+    }
+
+    // ---------- ENVIAR RESUMEN FINAL POR WHATSAPP (TEXTO O CAPTURA) ----------
+    // (Estas funciones no necesitan cambios)
+    sendTextBtn.addEventListener('click', () => {
+      const mensaje = encodeURIComponent(finalSummaryElem.textContent);
+      const whatsappURL = `https://wa.me/18294754755?text=${mensaje}`;
+      window.open(whatsappURL, '_blank');
+    });
+
+    sendPdfBtn.addEventListener('click', () => {
+      const lines = finalSummaryElem.textContent.split('\n');
+      const canvasWidth = 800;
+      const lineHeight = 24;
+      const padding = 20;
+      const canvasHeight = padding * 2 + lines.length * lineHeight;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.fillStyle = '#000000';
+      ctx.font = '20px Montserrat';
+      ctx.textBaseline = 'top';
+
+      lines.forEach((line, index) => {
+        ctx.fillText(line, padding, padding + index * lineHeight);
+      });
+
+      const dataURL = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'resultado_quiz.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      const infoText = encodeURIComponent('Hola, adjunto la captura de pantalla con los resultados del quiz generado.');
+      const whatsappURL = `https://wa.me/18294754755?text=${infoText}`;
+      window.open(whatsappURL, '_blank');
+    });
+  </script>
+</body>
+</html>
